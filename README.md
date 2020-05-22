@@ -1,5 +1,5 @@
-TULIP
-=============
+CODENAME TULIP
+==============
 Tulip is a bot made to listen in on MPD HTTP Streams. 
 
 Currently, she's programmed to listen in on an MPD ogg stream hosted on the same host she's on, but this can theoretically work on other hosts. 
