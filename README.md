@@ -10,7 +10,7 @@ DEPENDENCIES
 =============
 Python 3
 
-pip install discord.py
+pip install discord.py discord.py[voice]
 
 youtube-dl and ffmpeg installed on the machine (in the same folder if on windows)
 
