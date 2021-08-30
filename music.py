@@ -2,6 +2,7 @@ import discord
 import subprocess
 import os
 import socket
+import asyncio
 from datetime import timedelta
 from discord.ext import commands
 
@@ -50,8 +51,10 @@ class Music(commands.Cog):
             ps = subprocess.Popen(["mpc", "status"], stdout=subprocess.PIPE)
             result = subprocess.run(["head", "-n", "2"], stdin=ps.stdout, stdout=subprocess.PIPE)
             decode = result.stdout.decode('utf-8')
-            if decode[0:4] == 'http' : decode = "From Youtube"
-            await ctx.send("```\n" + decode + "```")
+            decode = decode.split("\n")
+            if decode[0][0:4] == 'http' : decode = "From Youtube"
+            await self.bot.change_presence(activity=discord.Game(name=f'{decode[0]}'))
+            await ctx.send("```\n" + decode[0] + "\n" + decode[1] + "```")
         except Exception as e:
             await ctx.send("**`ERROR: %s`**" % e)
 
@@ -124,5 +127,15 @@ class Music(commands.Cog):
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
+async def status_now_playing(bot):
+    while True:
+        ps = subprocess.Popen(["mpc", "status"], stdout=subprocess.PIPE)
+        result = subprocess.run(["head", "-n", "1"], stdin=ps.stdout, stdout=subprocess.PIPE)
+        decode = result.stdout.decode('utf-8')
+        if decode[0:4] == 'http' : decode = "From Youtube"
+        await bot.change_presence(activity=discord.Game(name=f'{decode}'))
+        await asyncio.sleep(60)
+
 def setup(bot):
+    bot.loop.create_task(status_now_playing(bot))
     bot.add_cog(Music(bot))
