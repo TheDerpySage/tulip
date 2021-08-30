@@ -1,4 +1,4 @@
-CODENAME TULIP
+tulip
 ==============
 Tulip is a bot made to listen in on MPD HTTP Streams. 
 
