@@ -1,4 +1,4 @@
-tulip
+CODENAME TULIP
 ==============
 Tulip is a bot made to listen in on MPD HTTP Streams. 
 
@@ -10,9 +10,9 @@ DEPENDENCIES
 =============
 Python 3
 
-pip install discord.py discord.py[voice]
+pip install discord.py[voice]
 
-youtube-dl and ffmpeg installed on the machine (in the same folder if on windows)
+yt-dlp and ffmpeg installed on the machine (in the same folder if on windows)
 
 NOTE
 =============

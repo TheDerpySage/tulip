@@ -17,7 +17,10 @@ def get_prefix(bot, msg):
 desc = '''Written and Developed by theDerpySage'''
 
 startup_extensions = ['simple', 'k8', 'admin', 'music']
-bot = commands.Bot(command_prefix=get_prefix,description=desc)
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
+bot = commands.Bot(command_prefix=get_prefix,description=desc, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -29,7 +32,7 @@ async def on_ready():
     if __name__ == '__main__':
         for extension in startup_extensions:
             try:
-                bot.load_extension(extension)
+                await bot.load_extension(extension)
             except:
                 print('Failed to load extension ' + extension, file=sys.stderr)
                 traceback.print_exc()
@@ -51,6 +54,8 @@ async def on_message(message):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("?")
-    raise error
+    elif isinstance(error, commands.errors.CheckFailure):
+        await ctx.send("You have no power here.")
+    else : await ctx.send("`" + str(error) + "`")
 
 bot.run(bot_config.token, reconnect=True)

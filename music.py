@@ -4,11 +4,15 @@ import os
 import socket
 import asyncio
 from datetime import timedelta
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.status_now_playing.start()
+
+    def cog_unload(self):
+        self.status_now_playing.cancel()
 
     @commands.command(aliases=['system', 'server', 'health'])
     async def system_info(self, ctx):
@@ -87,7 +91,7 @@ class Music(commands.Cog):
     async def youtube(self, ctx, link: str):
         """Insert a youtube link into the queue."""
         try:
-            ps = subprocess.Popen(["youtube-dl", "-f", "140", "-g", link], stdout=subprocess.PIPE)
+            ps = subprocess.Popen(["yt-dlp", "-f", "140", "-g", link], stdout=subprocess.PIPE)
             subprocess.run(["mpc", "insert"], stdin=ps.stdout, stdout=subprocess.PIPE, check=True)
             await ctx.send("Link Queued.")
         except Exception as e:
@@ -127,15 +131,13 @@ class Music(commands.Cog):
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
-async def status_now_playing(bot):
-    while True:
+    @tasks.loop(seconds=60)
+    async def status_now_playing(self):
         ps = subprocess.Popen(["mpc", "status"], stdout=subprocess.PIPE)
         result = subprocess.run(["head", "-n", "1"], stdin=ps.stdout, stdout=subprocess.PIPE)
         decode = result.stdout.decode('utf-8')
         if decode[0:4] == 'http' : decode = "From Youtube"
-        await bot.change_presence(activity=discord.Game(name=f'{decode}'))
-        await asyncio.sleep(60)
+        await self.bot.change_presence(activity=discord.Game(name=f'{decode}'))        
 
-def setup(bot):
-    bot.loop.create_task(status_now_playing(bot))
-    bot.add_cog(Music(bot))
+async def setup(bot):
+    await bot.add_cog(Music(bot))

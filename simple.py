@@ -65,5 +65,5 @@ class SimpleCog(commands.Cog):
         ouo = self.bot.get_emoji(643879976998797312)
         await ctx.send(str(ouo))
 
-def setup(bot):
-    bot.add_cog(SimpleCog(bot))
+async def setup(bot):
+    await bot.add_cog(SimpleCog(bot))

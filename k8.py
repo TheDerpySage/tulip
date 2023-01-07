@@ -106,5 +106,5 @@ class K8Cog(commands.Cog):
         """Show gratitude."""
         await ctx.send("No problem!")
 
-def setup(bot):
-    bot.add_cog(K8Cog(bot))
+async def setup(bot):
+    await bot.add_cog(K8Cog(bot))
